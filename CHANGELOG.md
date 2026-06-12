@@ -10,6 +10,17 @@
 ## [Unreleased]
 
 ### Added
+- **ROAS低下キャンペーン自動検出フロー** 実装（Issue #8）
+  - 全広告キャンペーンのROASを前期間と比較
+  - 3段階深刻度判定（🔴 Critical: 40%以上低下/ROAS<1.0、🟡 Warning: 20%以上低下、🔵 Info: 10%以上低下）
+  - 原因分析（CTR低下/CV率低下/CPC上昇/インプレッション減少/新規比率偏高/予算超過）
+  - 推奨アクション自動生成（入札調整/LP改善/キーワード見直し等）
+  - 推定損失額計算
+  - `campaign-performance-tools.ts`: キャンペーンパフォーマンスデータ取得（モック10件）
+  - `roas-decline-detection-flow.ts`: ROAS低下検出フロー
+  - `roas-decline-detection-flow.test.ts`: テスト24件
+  - package.json: `test:roas` スクリプト追加
+
 - **商品名バリデーションフロー** 実装（Issue #7）
   - Amazon商品名の75文字制限バリデーション
   - 超過商品検出（警告: 10文字以下超過 / エラー: 11文字以上超過）
@@ -20,7 +31,8 @@
   - `title-validation-flow.test.ts`: テスト17件
 
 ### Changed
-- 開発者ガイド: テストセクションを実装済み（36件合格）に更新
+- テスト合計: 36件 → **60件合格**（+24件）
+- 開発者ガイド: テストセクションを60件合格に更新
 - API仕様書: 実際のコードに即した内容に更新
 - package.json: `test:title` スクリプト追加
 - README: ディレクトリ構成・ロードマップ更新

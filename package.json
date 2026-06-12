@@ -10,7 +10,8 @@
     "test:inventory": "tsx flows/inventory-alert-flow.ts",
     "test:profit": "tsx flows/profit-management-flow.ts",
     "test:title": "tsx flows/title-validation-flow.ts",
-    "test:all": "npm run test:inventory && npm run test:profit && npm run test:title",
+    "test:roas": "tsx flows/roas-decline-detection-flow.ts",
+    "test:all": "npm run test:inventory && npm run test:profit && npm run test:title && npm run test:roas",
     "lint": "eslint . --ext .ts",
     "typecheck": "tsc --noEmit"
   },
