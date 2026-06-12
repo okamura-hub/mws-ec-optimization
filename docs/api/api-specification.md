@@ -14,8 +14,8 @@
 
 | 区分 | 状態 | 備考 |
 |------|------|------|
-| フロー実装 | ✅ プロトタイプ完成 | 在庫/利益の2フロー |
-| テスト | ✅ 19件合格 | Jest + ts-jest |
+| フロー実装 | ✅ プロトタイプ完成 | 在庫/利益/商品名バリデーションの3フロー |
+| テスト | ✅ 36件合格 | Jest + ts-jest |
 | APIエンドポイント | 🔲 未実装 | Phase 2で実装予定 |
 | 認証 | 🔲 未実装 | Phase 2で実装予定 |
 
@@ -27,8 +27,11 @@
 |-----------|------|---------|
 | `inventoryAlertFlow` | 在庫アラートフロー実行 | `flows/inventory-alert-flow.ts` |
 | `profitManagementFlow` | 利益管理フロー実行 | `flows/profit-management-flow.ts` |
+| `titleValidationFlow` | 商品名バリデーションフロー実行 | `flows/title-validation-flow.ts` |
 | `fetchInventoryData` | 在庫データ取得 | `shared/tools/inventory-tools.ts` |
 | `fetchProfitData` | 利益データ取得 | `shared/tools/profit-tools.ts` |
+| `fetchAmazonProducts` | Amazon商品カタログデータ取得 | `shared/tools/amazon-catalog-tools.ts` |
+| `validateProductTitle` | 商品名75文字バリデーション | `shared/tools/amazon-catalog-tools.ts` |
 | `sendSlackNotification` | Slack通知送信 | `shared/tools/slack-tools.ts` |
 
 ---
@@ -146,7 +149,96 @@ import { profitManagementFlow } from './flows/profit-management-flow';
 await profitManagementFlow();
 ```
 
-### 2.5 Slack通知送信
+### 2.5 商品名バリデーションフロー実行
+
+**関数:** `titleValidationFlow()`
+
+**ファイル:** `flows/title-validation-flow.ts`
+
+**戻り値:** `Promise<TitleValidationReport>`
+
+**説明:** Amazon商品名を取得し、75文字超過を検出します。Issue #7対応。
+
+**検出内容:**
+- 🟡 `warning`: 1〜10文字超過
+- 🔴 `error`: 11文字以上超過
+
+**型定義:**
+
+```typescript
+interface TitleValidationReport {
+  totalProducts: number;        // 総商品数
+  validCount: number;           // 適切な商品数
+  invalidCount: number;         // 超過商品数
+  warningCount: number;         // 警告（1〜10文字超過）
+  errorCount: number;           // 要修正（11文字以上超過）
+  invalidProducts: TitleValidationResult[];  // 超過商品一覧
+  summary: string;              // サマリーメッセージ
+  timestamp: string;            // 実行日時（ISO 8601）
+}
+
+interface TitleValidationResult {
+  asin: string;                 // ASIN
+  sku: string;                  // SKU
+  productName: string;          // 商品名
+  titleLength: number;          // 実際の文字数
+  maxLength: number;            // 最大文字数（75）
+  isValid: boolean;             // 適切かどうか
+  overBy: number;               // 超過文字数
+  severity: 'ok' | 'warning' | 'error';
+  recommendation: string;       // 修正推奨メッセージ
+}
+```
+
+**使用例:**
+
+```typescript
+import { titleValidationFlow } from './flows/title-validation-flow';
+
+const report = await titleValidationFlow();
+console.log(`${report.invalidCount}件の商品名が75文字を超過`);
+report.invalidProducts.forEach(p => {
+  console.log(`${p.productName}: ${p.titleLength}文字 (+${p.overBy})`);
+});
+```
+
+### 2.6 Amazon商品カタログデータ取得
+
+**関数:** `fetchAmazonProducts()`
+
+**ファイル:** `shared/tools/amazon-catalog-tools.ts`
+
+**戻り値:** `Promise<AmazonProduct[]>`
+
+**型定義:**
+
+```typescript
+interface AmazonProduct {
+  asin: string;                 // ASIN
+  sku: string;                  // SKU
+  productName: string;          // 商品名
+  titleLength: number;          // タイトル文字数
+  category: string;             // カテゴリ
+  status: 'active' | 'inactive' | 'suppressed';
+  lastUpdated: string;          // 最終更新日時（ISO 8601）
+}
+```
+
+**使用例:**
+
+```typescript
+import { fetchAmazonProducts, validateProductTitle } from './shared/tools/amazon-catalog-tools';
+
+const products = await fetchAmazonProducts();
+products.forEach(p => {
+  const result = validateProductTitle(p);
+  if (!result.isValid) {
+    console.log(`${p.productName}: ${result.overBy}文字超過`);
+  }
+});
+```
+
+### 2.7 Slack通知送信
 
 **関数:** `sendSlackNotification(alerts)`
 

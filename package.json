@@ -9,7 +9,8 @@
     "test": "jest --verbose",
     "test:inventory": "tsx flows/inventory-alert-flow.ts",
     "test:profit": "tsx flows/profit-management-flow.ts",
-    "test:all": "npm run test:inventory && npm run test:profit",
+    "test:title": "tsx flows/title-validation-flow.ts",
+    "test:all": "npm run test:inventory && npm run test:profit && npm run test:title",
     "lint": "eslint . --ext .ts",
     "typecheck": "tsc --noEmit"
   },

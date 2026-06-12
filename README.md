@@ -77,15 +77,18 @@ mws-ec-optimization/
 │   └── developer-guide.md             # 開発者ガイド
 ├── flows/
 │   ├── inventory-alert-flow.ts        # 在庫アラートフロー ✅ 動作検証済み
-│   └── profit-management-flow.ts      # 利益管理フロー ✅ 動作検証済み
+│   ├── profit-management-flow.ts      # 利益管理フロー ✅ 動作検証済み
+│   └── title-validation-flow.ts       # 商品名バリデーションフロー ✅ 動作検証済み
 ├── shared/
 │   └── tools/
 │       ├── inventory-tools.ts         # 在庫データツール（モック）
 │       ├── profit-tools.ts            # 利益データツール（モック）
+│       ├── amazon-catalog-tools.ts    # Amazon商品カタログツール（モック）
 │       └── slack-tools.ts             # Slack通知ツール（モック）
 ├── tests/
 │   ├── inventory-alert-flow.test.ts   # 在庫アラートテスト（9件）
-│   └── profit-management-flow.test.ts # 利益管理テスト（10件）
+│   ├── profit-management-flow.test.ts # 利益管理テスト（10件）
+│   └── title-validation-flow.test.ts  # 商品名バリデーションテスト（17件）
 ├── data/
 │   └── test/
 │       ├── inventory-test-data.json   # 在庫テストデータ
@@ -147,7 +150,8 @@ npm test
 # フロー実行（モックデータ）
 npm run test:inventory   # 在庫アラートフロー
 npm run test:profit      # 利益管理フロー
-npm run test:all         # 両フロー実行
+npm run test:title       # 商品名バリデーションフロー
+npm run test:all         # 全フロー実行
 ```
 
 ---
@@ -189,9 +193,10 @@ npm run test:all         # 両フロー実行
 - [x] 在庫アラートフロー プロトタイプ実装 ✅
 - [x] 利益管理フロー プロトタイプ実装 ✅
 - [x] テストデータ作成
-- [x] テストコード作成（19件合格）
+- [x] テストコード作成（36件合格）
 - [x] API仕様書・開発者ガイド作成
 - [x] GitHub Issue起票（P0-P2 9件）
+- [x] Amazon商品名75文字バリデーション（#7）✅
 
 ### Phase 2（2026年7月）: MVP実装
 - [ ] Amazon Ads MCP連携（在庫データ取得）
@@ -199,7 +204,6 @@ npm run test:all         # 両フロー実行
 - [ ] Slack通知の本番化（Bot Token接続）
 - [ ] 日次レポート自動生成（Cron連携）
 - [ ] ROAS低下キャンペーン自動検出（#8）
-- [ ] Amazon商品名75文字バリデーション（#7）
 
 ### Phase 3（2026年8月）: 拡張
 - [ ] 原価未登録商品自動検出（#10）

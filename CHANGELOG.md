@@ -10,13 +10,20 @@
 ## [Unreleased]
 
 ### Added
-- CONTRIBUTING.md 追加
-- CHANGELOG.md 追加
-- .gitignore 追加
+- **商品名バリデーションフロー** 実装（Issue #7）
+  - Amazon商品名の75文字制限バリデーション
+  - 超過商品検出（警告: 10文字以下超過 / エラー: 11文字以上超過）
+  - ASIN・SKU・文字数・修正推奨メッセージのレポート生成
+  - Slack通知メッセージ・Block Kitフォーマット生成
+  - `amazon-catalog-tools.ts`: Amazon商品カタログデータ取得（モック）
+  - `title-validation-flow.ts`: 商品名バリデーションフロー
+  - `title-validation-flow.test.ts`: テスト17件
 
 ### Changed
-- 開発者ガイド: テストセクションを実装済み（19件合格）に更新
+- 開発者ガイド: テストセクションを実装済み（36件合格）に更新
 - API仕様書: 実際のコードに即した内容に更新
+- package.json: `test:title` スクリプト追加
+- README: ディレクトリ構成・ロードマップ更新
 
 ---
 
