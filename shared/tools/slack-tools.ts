@@ -102,8 +102,8 @@ function formatAlertMessage(alerts: InventoryAlert[]): string {
     message += '🔵 滞留在庫・過剰在庫\n';
     info.forEach(alert => {
       message += `• ${alert.productName} (${alert.sku})\n`;
-      if (alert.daysOfStock === Infinity) {
-        message += `  在庫: ${alert.currentStock}個 / ${alert.daysOfStock}日分以上未販売\n`;
+      if (alert.daysOfStock >= 9999) {
+        message += `  在庫: ${alert.currentStock}個 / 90日分以上未販売\n`;
       } else {
         message += `  在庫: ${alert.currentStock}個 / 残り${alert.daysOfStock}日分\n`;
       }
@@ -122,7 +122,7 @@ function formatAlertMessage(alerts: InventoryAlert[]): string {
 /**
  * Slack Block Kitフォーマット
  */
-function formatAlertBlocks(alerts: InventoryAlert[]): any[] {
+export function formatAlertBlocks(alerts: InventoryAlert[]): any[] {
   const blocks: any[] = [
     {
       type: 'header',

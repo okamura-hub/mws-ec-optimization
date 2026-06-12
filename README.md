@@ -60,29 +60,38 @@
 ```
 mws-ec-optimization/
 ├── README.md                          # このファイル
+├── package.json                       # パッケージ設定
+├── tsconfig.json                      # TypeScript設定
+├── jest.config.js                     # Jestテスト設定
 ├── docs/
 │   ├── 01-challenges-analysis.md      # 議事録から抽出した課題分析
 │   ├── 02-agent-design.md             # エージェント設計ドキュメント
 │   ├── 03-implementation-roadmap.md   # 実装ロードマップ
-│   └── 04-integration-guide.md        # 既存システムとの統合ガイド
-├── agents/
-│   ├── ec-operations/                 # EC運営エージェント
-│   ├── data-analytics/                # データ分析エージェント
-│   ├── content-optimization/          # コンテンツ最適化エージェント
-│   └── org-development/               # 組織開発エージェント
+│   ├── 04-integration-guide.md        # 既存システムとの統合ガイド
+│   ├── api/
+│   │   └── api-specification.md       # API仕様書
+│   └── developer-guide.md             # 開発者ガイド
 ├── flows/
-│   ├── daily-report-flow.ts           # 日次レポートフロー
-│   ├── inventory-alert-flow.ts        # 在庫アラートフロー
-│   └── content-improvement-flow.ts    # コンテンツ改善フロー
-├── tools/
-│   ├── amazon-tools.ts                # Amazon関連ツール
-│   ├── notion-tools.ts                # Notion連携ツール
-│   └── slack-tools.ts                 # Slack連携ツール
-├── scripts/
-│   ├── analyze-meeting-notes.py       # 議事録分析スクリプト
-│   └── generate-issues.py             # Issue自動生成スクリプト
-└── issues/
-    └── templates/                     # Issueテンプレート
+│   ├── inventory-alert-flow.ts        # 在庫アラートフロー ✅ 動作検証済み
+│   └── profit-management-flow.ts      # 利益管理フロー ✅ 動作検証済み
+├── shared/
+│   └── tools/
+│       ├── inventory-tools.ts         # 在庫データツール（モック）
+│       ├── profit-tools.ts            # 利益データツール（モック）
+│       └── slack-tools.ts             # Slack通知ツール（モック）
+├── tests/
+│   ├── inventory-alert-flow.test.ts   # 在庫アラートテスト（9件）
+│   └── profit-management-flow.test.ts # 利益管理テスト（10件）
+├── data/
+│   └── test/
+│       ├── inventory-test-data.json   # 在庫テストデータ
+│       └── profit-test-data.json      # 利益テストデータ
+├── prompts/
+│   ├── analyze-meeting-notes.md       # 議事録分析プロンプト
+│   └── full-analysis-prompt.md        # 包括分析プロンプト
+├── outputs/
+│   └── codex-issue-analysis-*.md      # Codex分析結果
+└── .env.example                       # 環境変数テンプレート
 ```
 
 ---
@@ -110,8 +119,16 @@ npm install
 cp .env.example .env
 # .env を編集
 
-# 開発サーバー起動
-npm run dev
+# 型チェック
+npm run typecheck
+
+# テスト実行
+npm test
+
+# フロー実行（モックデータ）
+npm run test:inventory   # 在庫アラートフロー
+npm run test:profit      # 利益管理フロー
+npm run test:all         # 両フロー実行
 ```
 
 ---
@@ -147,21 +164,34 @@ npm run dev
 
 ### Phase 1（〜2026年6月末）: 基盤構築
 - [x] リポジトリ作成
-- [ ] 課題分析ドキュメント作成
-- [ ] エージェント設計ドキュメント作成
-- [ ] 既存システム統合設計
+- [x] 課題分析ドキュメント作成（議事録38回分分析）
+- [x] エージェント設計ドキュメント作成
+- [x] 既存システム統合設計
+- [x] 在庫アラートフロー プロトタイプ実装 ✅
+- [x] 利益管理フロー プロトタイプ実装 ✅
+- [x] テストデータ作成
+- [x] テストコード作成（19件合格）
+- [x] API仕様書・開発者ガイド作成
+- [x] GitHub Issue起票（P0-P2 9件）
 
 ### Phase 2（2026年7月）: MVP実装
-- [ ] EC運営エージェント（在庫管理）
-- [ ] データ分析エージェント（KPI可視化）
-- [ ] 日次レポート自動生成
+- [ ] Amazon Ads MCP連携（在庫データ取得）
+- [ ] 各モールCSV連携（売上データ取得）
+- [ ] Slack通知の本番化（Bot Token接続）
+- [ ] 日次レポート自動生成（Cron連携）
+- [ ] ROAS低下キャンペーン自動検出（#8）
+- [ ] Amazon商品名75文字バリデーション（#7）
 
 ### Phase 3（2026年8月）: 拡張
-- [ ] コンテンツ最適化エージェント
-- [ ] 組織開発エージェント
-- [ ] 商品開発支援機能
+- [ ] 原価未登録商品自動検出（#10）
+- [ ] 各モール横断価格乖離アラート（#9）
+- [ ] 滞留在庫90日以上の自動廃棄判定（#11）
+- [ ] CSフィードバック週次サマリー（#12）
+- [ ] セール前コンテンツ一括最適化（#13）
 
 ### Phase 4（2026年9月〜）: 最適化
+- [ ] 全モール横断KPIダッシュボード（#14）
+- [ ] 業務マニュアル自動生成（#15）
 - [ ] 全エージェント連携
 - [ ] 学習・改善ループ
 - [ ] 他部門への展開

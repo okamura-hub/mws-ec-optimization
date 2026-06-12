@@ -12,7 +12,7 @@
  */
 
 import { fetchInventoryData, InventoryData } from '../shared/tools/inventory-tools';
-import { sendSlackNotification, InventoryAlert } from '../shared/tools/slack-tools';
+import { sendSlackNotification } from '../shared/tools/slack-tools';
 
 // アラートレベル
 type AlertLevel = 'critical' | 'warning' | 'info';
@@ -94,21 +94,19 @@ function analyzeInventory(data: InventoryData[]): InventoryAlertInfo[] {
       });
     }
     
-    // 滞留在庫（90日以上）
-    if (item.daysSinceLastSale >= 90) {
+    // 滞留在庫（90日以上）- 在庫切れ警告と重複しないようelse if
+    if (item.daysSinceLastSale >= 90 && daysOfStock > 14) {
       alerts.push({
         sku: item.sku,
         productName: item.productName,
         currentStock: item.quantity,
-        daysOfStock: Infinity,
+        daysOfStock: daysOfStock === Infinity ? 9999 : daysOfStock,
         alertLevel: 'info',
         recommendedAction: '廃棄またはセール検討',
         mall: item.mall
       });
-    }
-    
-    // 過剰在庫（180日分以上）
-    if (daysOfStock >= 180) {
+    } else if (daysOfStock >= 180 && daysOfStock !== Infinity) {
+      // 過剰在庫（180日分以上）- 滞留在庫と重複しないよう条件分岐
       alerts.push({
         sku: item.sku,
         productName: item.productName,

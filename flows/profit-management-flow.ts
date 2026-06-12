@@ -103,9 +103,9 @@ export async function profitManagementFlow(): Promise<void> {
 function analyzeProfit(data: ProfitData[]): ProfitAnalysis {
   const period = getPreviousMonth();
   
-  // 合計計算
+  // 合計計算（総コスト = 原価 + 配送費 + 広告費 + 手数料）
   const totalSales = data.reduce((sum, item) => sum + item.sales, 0);
-  const totalCost = data.reduce((sum, item) => sum + item.cost, 0);
+  const totalCost = data.reduce((sum, item) => sum + (item.cost ?? 0) + item.shippingCost + item.adCost + item.fee, 0);
   const totalProfit = totalSales - totalCost;
   const profitMargin = totalSales > 0 ? totalProfit / totalSales : 0;
   
@@ -126,8 +126,7 @@ function analyzeProfit(data: ProfitData[]): ProfitAnalysis {
     }));
   
   // 異常値（仮）
-  const anomalies: ProfitAnomaly[] = [];
-  
+  const anomalies: ProfitAnomaly[] = [];  
   return {
     period,
     totalSales,
@@ -150,10 +149,11 @@ function aggregateByProduct(data: ProfitData[]): ProductProfit[] {
   for (const item of data) {
     const key = item.sku;
     const existing = map.get(key);
+    const itemTotalCost = (item.cost ?? 0) + item.shippingCost + item.adCost + item.fee;
     
     if (existing) {
       existing.sales += item.sales;
-      existing.cost += item.cost;
+      existing.cost += itemTotalCost;
       existing.profit = existing.sales - existing.cost;
       existing.profitMargin = existing.sales > 0 ? existing.profit / existing.sales : 0;
     } else {
@@ -161,9 +161,9 @@ function aggregateByProduct(data: ProfitData[]): ProductProfit[] {
         sku: item.sku,
         productName: item.productName,
         sales: item.sales,
-        cost: item.cost,
-        profit: item.sales - item.cost,
-        profitMargin: item.sales > 0 ? (item.sales - item.cost) / item.sales : 0,
+        cost: itemTotalCost,
+        profit: item.sales - itemTotalCost,
+        profitMargin: item.sales > 0 ? (item.sales - itemTotalCost) / item.sales : 0,
         mall: item.mall
       });
     }
@@ -182,19 +182,20 @@ function aggregateByMall(data: ProfitData[]): MallProfit[] {
   for (const item of data) {
     const key = item.mall;
     const existing = map.get(key);
+    const itemTotalCost = (item.cost ?? 0) + item.shippingCost + item.adCost + item.fee;
     
     if (existing) {
       existing.sales += item.sales;
-      existing.cost += item.cost;
+      existing.cost += itemTotalCost;
       existing.profit = existing.sales - existing.cost;
       existing.profitMargin = existing.sales > 0 ? existing.profit / existing.sales : 0;
     } else {
       map.set(key, {
         mall: item.mall,
         sales: item.sales,
-        cost: item.cost,
-        profit: item.sales - item.cost,
-        profitMargin: item.sales > 0 ? (item.sales - item.cost) / item.sales : 0
+        cost: itemTotalCost,
+        profit: item.sales - itemTotalCost,
+        profitMargin: item.sales > 0 ? (item.sales - itemTotalCost) / item.sales : 0
       });
     }
   }
