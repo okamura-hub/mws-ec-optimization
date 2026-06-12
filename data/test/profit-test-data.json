@@ -1,0 +1,114 @@
+{
+  "profit": [
+    {
+      "sku": "IPHONE-CASE-001",
+      "productName": "iPhone 15 Pro ケース クリア",
+      "sales": 450000,
+      "cost": 180000,
+      "shippingCost": 45000,
+      "adCost": 90000,
+      "fee": 67500,
+      "mall": "amazon",
+      "period": "2026-05"
+    },
+    {
+      "sku": "IPHONE-CASE-002",
+      "productName": "iPhone 15 Pro ケース ブラック",
+      "sales": 320000,
+      "cost": 128000,
+      "shippingCost": 32000,
+      "adCost": 64000,
+      "fee": 48000,
+      "mall": "amazon",
+      "period": "2026-05"
+    },
+    {
+      "sku": "SCREEN-PROTECTOR-001",
+      "productName": "iPhone 15 Pro ガラスフィルム",
+      "sales": 280000,
+      "cost": 84000,
+      "shippingCost": 28000,
+      "adCost": 56000,
+      "fee": 42000,
+      "mall": "rakuten",
+      "period": "2026-05"
+    },
+    {
+      "sku": "GALAXY-CASE-001",
+      "productName": "Galaxy S24 ケース クリア",
+      "sales": 150000,
+      "cost": 60000,
+      "shippingCost": 15000,
+      "adCost": 30000,
+      "fee": 22500,
+      "mall": "amazon",
+      "period": "2026-05"
+    },
+    {
+      "sku": "CHARGER-001",
+      "productName": "USB-C 充電器 20W",
+      "sales": 600000,
+      "cost": null,
+      "shippingCost": 60000,
+      "adCost": 120000,
+      "fee": 90000,
+      "mall": "amazon",
+      "period": "2026-05"
+    },
+    {
+      "sku": "CABLE-001",
+      "productName": "Lightning ケーブル 1m",
+      "sales": 180000,
+      "cost": 90000,
+      "shippingCost": 18000,
+      "adCost": 36000,
+      "fee": 27000,
+      "mall": "yahoo",
+      "period": "2026-05"
+    },
+    {
+      "sku": "EARPHONE-001",
+      "productName": "Bluetooth イヤホン",
+      "sales": 500000,
+      "cost": 250000,
+      "shippingCost": 50000,
+      "adCost": 100000,
+      "fee": 75000,
+      "mall": "qoo10",
+      "period": "2026-05"
+    },
+    {
+      "sku": "SPEAKER-001",
+      "productName": "Bluetooth スピーカー",
+      "sales": 800000,
+      "cost": 480000,
+      "shippingCost": 80000,
+      "adCost": 160000,
+      "fee": 120000,
+      "mall": "amazon",
+      "period": "2026-05"
+    },
+    {
+      "sku": "BATTERY-001",
+      "productName": "モバイルバッテリー 10000mAh",
+      "sales": 400000,
+      "cost": null,
+      "shippingCost": 40000,
+      "adCost": 80000,
+      "fee": 60000,
+      "mall": "rakuten",
+      "period": "2026-05"
+    },
+    {
+      "sku": "STAND-001",
+      "productName": "スマホスタンド",
+      "sales": 120000,
+      "cost": 48000,
+      "shippingCost": 12000,
+      "adCost": 24000,
+      "fee": 18000,
+      "mall": "aupay",
+      "period": "2026-05"
+    }
+  ]
+}
