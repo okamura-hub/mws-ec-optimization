@@ -25,6 +25,22 @@ export interface InventoryAlert {
   mall: string;
 }
 
+// 利益レポート
+export interface ProfitReport {
+  period: string;
+  summary: {
+    totalSales: number;
+    totalProfit: number;
+    profitMargin: number;
+    unregisteredCount: number;
+    anomalyCount: number;
+  };
+  topLowMarginProducts: any[];
+  byMall: any[];
+  anomalies: any[];
+  recommendations: string[];
+}
+
 /**
  * Slack通知送信
  * 
@@ -232,6 +248,57 @@ export async function sendDailyReport(report: any): Promise<void> {
   // TODO: 本番実装
   console.log('[slack-notification] 日次レポート通知（モック）');
   console.log(report);
+}
+
+/**
+ * 利益レポート通知
+ */
+export async function sendProfitReport(report: ProfitReport): Promise<void> {
+  // TODO: 本番実装
+  console.log('[slack-notification] 利益レポート通知（モック）');
+  
+  const message = formatProfitReportMessage(report);
+  console.log(message);
+}
+
+/**
+ * 利益レポートメッセージ整形
+ */
+function formatProfitReportMessage(report: ProfitReport): string {
+  let message = `💰 利益レポート ${report.period}\n\n`;
+  
+  message += `【サマリー】\n`;
+  message += `売上: ¥${report.summary.totalSales.toLocaleString()}\n`;
+  message += `利益: ¥${report.summary.totalProfit.toLocaleString()}\n`;
+  message += `利益率: ${(report.summary.profitMargin * 100).toFixed(2)}%\n`;
+  message += `原価未登録: ${report.summary.unregisteredCount}件\n`;
+  message += `異常値: ${report.summary.anomalyCount}件\n\n`;
+  
+  if (report.topLowMarginProducts.length > 0) {
+    message += `【低利益率商品 TOP5】\n`;
+    report.topLowMarginProducts.slice(0, 5).forEach((product, index) => {
+      message += `${index + 1}. ${product.productName}\n`;
+      message += `   利益率: ${(product.profitMargin * 100).toFixed(2)}%\n`;
+      message += `   売上: ¥${product.sales.toLocaleString()}\n\n`;
+    });
+  }
+  
+  if (report.anomalies.length > 0) {
+    message += `【異常値】\n`;
+    report.anomalies.forEach((anomaly, index) => {
+      message += `${index + 1}. ${anomaly.message}\n`;
+    });
+    message += `\n`;
+  }
+  
+  if (report.recommendations.length > 0) {
+    message += `【推奨アクション】\n`;
+    report.recommendations.forEach((rec, index) => {
+      message += `${index + 1}. ${rec}\n`;
+    });
+  }
+  
+  return message;
 }
 
 /**
