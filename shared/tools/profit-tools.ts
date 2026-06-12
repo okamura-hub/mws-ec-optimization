@@ -41,6 +41,15 @@ export interface UnregisteredCostItem {
  * - 各モールのCSV/Excel
  * - Amazon Ads MCP
  * - 自社システム
+ * 
+ * @returns {Promise<ProfitData[]>} 利益データの配列
+ * @throws {Error} データ取得に失敗した場合
+ * 
+ * @example
+ * ```typescript
+ * const data = await fetchProfitData();
+ * const totalSales = data.reduce((sum, item) => sum + item.sales, 0);
+ * ```
  */
 export async function fetchProfitData(): Promise<ProfitData[]> {
   // TODO: 本番実装
@@ -187,7 +196,14 @@ function getPreviousMonth(): string {
 /**
  * Amazon売上データ取得（CSV）
  * 
- * 本番実装用
+ * 本番実装用。Amazon CSVから売上データを取得します。
+ * 
+ * @returns {Promise<ProfitData[]>} Amazon売上データの配列
+ * 
+ * @example
+ * ```typescript
+ * const amazonSales = await fetchAmazonSalesData();
+ * ```
  */
 export async function fetchAmazonSalesData(): Promise<ProfitData[]> {
   // TODO: Amazon CSVから取得
@@ -200,7 +216,14 @@ export async function fetchAmazonSalesData(): Promise<ProfitData[]> {
 /**
  * 楽天売上データ取得（CSV）
  * 
- * 本番実装用
+ * 本番実装用。楽天CSVから売上データを取得します。
+ * 
+ * @returns {Promise<ProfitData[]>} 楽天売上データの配列
+ * 
+ * @example
+ * ```typescript
+ * const rakutenSales = await fetchRakutenSalesData();
+ * ```
  */
 export async function fetchRakutenSalesData(): Promise<ProfitData[]> {
   // TODO: 楽天CSVから取得
@@ -213,7 +236,15 @@ export async function fetchRakutenSalesData(): Promise<ProfitData[]> {
 /**
  * 原価データ取得（Excel）
  * 
- * 本番実装用
+ * 本番実装用。原価ExcelからSKU単位の原価データを取得します。
+ * 
+ * @returns {Promise<Map<string, number>>} SKUをキー、原価を値とするMap
+ * 
+ * @example
+ * ```typescript
+ * const costMap = await fetchCostData();
+ * const iphoneCost = costMap.get('IPHONE-CASE-001'); // 180000
+ * ```
  */
 export async function fetchCostData(): Promise<Map<string, number>> {
   // TODO: 原価Excelから取得

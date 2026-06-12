@@ -29,6 +29,15 @@ export interface InventoryData {
  * - Amazon Ads MCP (FBA在庫)
  * - 各モールのAPI/CSV
  * - 自社倉庫システム
+ * 
+ * @returns {Promise<InventoryData[]>} 在庫データの配列
+ * @throws {Error} データ取得に失敗した場合
+ * 
+ * @example
+ * ```typescript
+ * const data = await fetchInventoryData();
+ * console.log(`${data.length}件の在庫データを取得`);
+ * ```
  */
 export async function fetchInventoryData(): Promise<InventoryData[]> {
   // TODO: 本番実装
@@ -117,7 +126,14 @@ function getMockInventoryData(): InventoryData[] {
 /**
  * Amazon FBA在庫取得（MCP経由）
  * 
- * 本番実装用
+ * 本番実装用。Amazon Ads MCP経由でFBA在庫を取得します。
+ * 
+ * @returns {Promise<InventoryData[]>} Amazon FBA在庫データの配列
+ * 
+ * @example
+ * ```typescript
+ * const amazonData = await fetchAmazonFBAInventory();
+ * ```
  */
 export async function fetchAmazonFBAInventory(): Promise<InventoryData[]> {
   // TODO: Amazon Ads MCP経由で取得
@@ -130,7 +146,14 @@ export async function fetchAmazonFBAInventory(): Promise<InventoryData[]> {
 /**
  * 自社倉庫在庫取得
  * 
- * 本番実装用
+ * 本番実装用。自社倉庫システムAPI経由で在庫を取得します。
+ * 
+ * @returns {Promise<InventoryData[]>} 自社倉庫在庫データの配列
+ * 
+ * @example
+ * ```typescript
+ * const warehouseData = await fetchWarehouseInventory();
+ * ```
  */
 export async function fetchWarehouseInventory(): Promise<InventoryData[]> {
   // TODO: 自社倉庫システムAPI経由で取得

@@ -96,7 +96,8 @@ mws-ec-optimization/
 │       └── profit-test-data.json      # 利益テストデータ
 │
 └── tests/                             # テストファイル
-    └── (未実装)
+    ├── inventory-alert-flow.test.ts   # 在庫アラートテスト（9件）
+    └── profit-management-flow.test.ts # 利益管理テスト（10件）
 ```
 
 ---
@@ -214,13 +215,35 @@ npm run test:profit
 ```typescript
 // tests/inventory-alert-flow.test.ts
 
-import { inventoryAlertFlow } from '../flows/inventory-alert-flow';
+import { fetchInventoryData } from '../shared/tools/inventory-tools';
 
-describe('inventoryAlertFlow', () => {
-  it('should detect critical alerts', async () => {
-    // テスト実装
+describe('在庫アラートフロー', () => {
+  describe('fetchInventoryData', () => {
+    it('モックデータを取得できる', async () => {
+      const data = await fetchInventoryData();
+      expect(data).toBeDefined();
+      expect(data.length).toBeGreaterThan(0);
+    });
+
+    it('各在庫データが必要なフィールドを持つ', async () => {
+      const data = await fetchInventoryData();
+      data.forEach(item => {
+        expect(item.sku).toBeDefined();
+        expect(item.productName).toBeDefined();
+        expect(item.quantity).toBeDefined();
+        expect(item.averageDailySales).toBeDefined();
+        expect(item.mall).toBeDefined();
+      });
+    });
   });
 });
+```
+
+### 6.3 カバレッジ確認
+
+```bash
+# カバレッジレポート生成
+npm run test -- --coverage
 ```
 
 ---
@@ -316,4 +339,5 @@ grep "ERROR" logs/app.log
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-06-13 | テスト実装済み（19件合格）に更新 |
 | 2026-06-12 | 初版作成 |

@@ -60,6 +60,10 @@
 ```
 mws-ec-optimization/
 ├── README.md                          # このファイル
+├── CHANGELOG.md                       # 変更履歴
+├── CONTRIBUTING.md                    # 貢献ガイドライン
+├── .gitignore                         # Git無視設定
+├── .env.example                       # 環境変数テンプレート
 ├── package.json                       # パッケージ設定
 ├── tsconfig.json                      # TypeScript設定
 ├── jest.config.js                     # Jestテスト設定
@@ -93,6 +97,21 @@ mws-ec-optimization/
 │   └── codex-issue-analysis-*.md      # Codex分析結果
 └── .env.example                       # 環境変数テンプレート
 ```
+
+---
+
+## ドキュメント
+
+| ドキュメント | 説明 |
+|------------|------|
+| [API仕様書](docs/api/api-specification.md) | TypeScriptモジュール API / HTTP API（予定） |
+| [開発者ガイド](docs/developer-guide.md) | 開発環境セットアップ、コーディング規約 |
+| [貢献ガイドライン](CONTRIBUTING.md) | Issue起票、PR作成、テスト方法 |
+| [変更履歴](CHANGELOG.md) | リリースごとの変更点 |
+| [課題分析](docs/01-challenges-analysis.md) | 議事録38回分から抽出した課題 |
+| [エージェント設計](docs/02-agent-design.md) | 4つのエージェント設計 |
+| [実装ロードマップ](docs/03-implementation-roadmap.md) | 6ヶ月実装計画 |
+| [統合ガイド](docs/04-integration-guide.md) | 既存システムとの連携 |
 
 ---
 

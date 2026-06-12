@@ -1,7 +1,8 @@
 # API仕様書
 
 > 作成日: 2026年6月12日  
-> 版本: 1.0.0
+> 更新日: 2026年6月13日  
+> 版本: 1.1.0
 
 ---
 
@@ -9,18 +10,173 @@
 
 本ドキュメントは、MWS EC OptimizationプロジェクトのAPI仕様を定義します。
 
-### 1.1 利用可能なAPI
+### 1.1 現在のステータス
 
-| API名 | 説明 | エンドポイント |
-|-------|------|--------------|
-| Inventory API | 在庫データ取得 | `/api/inventory` |
-| Profit API | 利益データ取得 | `/api/profit` |
-| KPI API | KPIデータ取得 | `/api/kpi` |
-| Content API | コンテンツ最適化 | `/api/content` |
+| 区分 | 状態 | 備考 |
+|------|------|------|
+| フロー実装 | ✅ プロトタイプ完成 | 在庫/利益の2フロー |
+| テスト | ✅ 19件合格 | Jest + ts-jest |
+| APIエンドポイント | 🔲 未実装 | Phase 2で実装予定 |
+| 認証 | 🔲 未実装 | Phase 2で実装予定 |
+
+**注意**: 現在はTypeScriptモジュールとして直接呼び出し可能です。HTTP APIはPhase 2で実装予定です。
+
+### 1.2 利用可能なモジュール（TypeScript直接呼び出し）
+
+| モジュール | 説明 | ファイル |
+|-----------|------|---------|
+| `inventoryAlertFlow` | 在庫アラートフロー実行 | `flows/inventory-alert-flow.ts` |
+| `profitManagementFlow` | 利益管理フロー実行 | `flows/profit-management-flow.ts` |
+| `fetchInventoryData` | 在庫データ取得 | `shared/tools/inventory-tools.ts` |
+| `fetchProfitData` | 利益データ取得 | `shared/tools/profit-tools.ts` |
+| `sendSlackNotification` | Slack通知送信 | `shared/tools/slack-tools.ts` |
 
 ---
 
-## 2. Inventory API
+## 2. TypeScriptモジュール API（現在利用可能）
+
+### 2.1 在庫データ取得
+
+**関数:** `fetchInventoryData()`
+
+**ファイル:** `shared/tools/inventory-tools.ts`
+
+**戻り値:** `Promise<InventoryData[]>`
+
+**型定義:**
+
+```typescript
+interface InventoryData {
+  sku: string;                    // SKUコード
+  productName: string;            // 商品名
+  quantity: number;               // 在庫数
+  averageDailySales: number;      // 平均日間売上
+  daysSinceLastSale: number;      // 最終販売からの経過日数
+  mall: 'amazon' | 'rakuten' | 'yahoo' | 'aupay' | 'qoo10' | 'warehouse';
+  lastUpdated: string;            // 最終更新日時（ISO 8601）
+}
+```
+
+**使用例:**
+
+```typescript
+import { fetchInventoryData } from './shared/tools/inventory-tools';
+
+const data = await fetchInventoryData();
+console.log(`${data.length}件の在庫データを取得`);
+```
+
+### 2.2 利益データ取得
+
+**関数:** `fetchProfitData()`
+
+**ファイル:** `shared/tools/profit-tools.ts`
+
+**戻り値:** `Promise<ProfitData[]>`
+
+**型定義:**
+
+```typescript
+interface ProfitData {
+  sku: string;                    // SKUコード
+  productName: string;            // 商品名
+  sales: number;                  // 売上額
+  cost: number | null;            // 原価（未登録の場合はnull）
+  shippingCost: number;           // 配送費
+  adCost: number;                 // 広告費
+  fee: number;                    // 手数料
+  mall: 'amazon' | 'rakuten' | 'yahoo' | 'aupay' | 'qoo10';
+  period: string;                 // 期間（YYYY-MM形式）
+}
+```
+
+**使用例:**
+
+```typescript
+import { fetchProfitData } from './shared/tools/profit-tools';
+
+const data = await fetchProfitData();
+const totalSales = data.reduce((sum, item) => sum + item.sales, 0);
+```
+
+### 2.3 在庫アラートフロー実行
+
+**関数:** `inventoryAlertFlow()`
+
+**ファイル:** `flows/inventory-alert-flow.ts`
+
+**戻り値:** `Promise<void>`
+
+**説明:** 在庫データを分析し、アラートをSlackに通知します。
+
+**検出アラート:**
+- 🔴 `critical`: 在庫切れ注意（7日分以下）
+- 🟡 `warning`: 在庫警告（14日分以下）
+- 🔵 `info`: 滞留在庫（90日以上未販売）/ 過剰在庫（180日分以上）
+
+**使用例:**
+
+```typescript
+import { inventoryAlertFlow } from './flows/inventory-alert-flow';
+
+await inventoryAlertFlow();
+```
+
+### 2.4 利益管理フロー実行
+
+**関数:** `profitManagementFlow()`
+
+**ファイル:** `flows/profit-management-flow.ts`
+
+**戻り値:** `Promise<void>`
+
+**説明:** 前月の利益データを分析し、レポートをSlackに通知します。
+
+**分析内容:**
+- 商品別・モール別の利益率計算
+- 原価未登録商品の検出
+- 低利益率商品（10%未満）のアラート
+- 推奨アクションの生成
+
+**使用例:**
+
+```typescript
+import { profitManagementFlow } from './flows/profit-management-flow';
+
+await profitManagementFlow();
+```
+
+### 2.5 Slack通知送信
+
+**関数:** `sendSlackNotification(alerts)`
+
+**ファイル:** `shared/tools/slack-tools.ts`
+
+**パラメータ:**
+
+| 名前 | 型 | 説明 |
+|------|-----|------|
+| `alerts` | `InventoryAlert[]` | アラート情報の配列 |
+
+**型定義:**
+
+```typescript
+interface InventoryAlert {
+  sku: string;
+  productName: string;
+  currentStock: number;
+  daysOfStock: number;
+  alertLevel: 'critical' | 'warning' | 'info';
+  recommendedAction: string;
+  mall: string;
+}
+```
+
+---
+
+## 3. HTTP API（Phase 2で実装予定）
+
+> ⚠️ 以下はPhase 2で実装予定のHTTP API仕様です。現在は上記TypeScriptモジュールを直接利用してください。
 
 ### 2.1 在庫データ取得
 
@@ -385,4 +541,5 @@ Authorization: Bearer <your-token>
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-06-13 | v1.1.0: TypeScriptモジュールAPI仕様追加、HTTP APIをPhase 2予定に変更 |
 | 2026-06-12 | 初版作成 |

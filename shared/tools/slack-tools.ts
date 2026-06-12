@@ -44,7 +44,27 @@ export interface ProfitReport {
 /**
  * Slack通知送信
  * 
- * Hermes AgentのSlack設定を使用
+ * Hermes AgentのSlack設定を使用します。
+ * 在庫アラート情報をSlackチャンネルに送信します。
+ * 
+ * @param {InventoryAlert[]} alerts - 送信するアラート情報の配列
+ * @returns {Promise<void>}
+ * 
+ * @example
+ * ```typescript
+ * const alerts = [
+ *   {
+ *     sku: 'IPHONE-CASE-001',
+ *     productName: 'iPhone 15 Pro ケース',
+ *     currentStock: 5,
+ *     daysOfStock: 2,
+ *     alertLevel: 'critical',
+ *     recommendedAction: '緊急発注',
+ *     mall: 'amazon'
+ *   }
+ * ];
+ * await sendSlackNotification(alerts);
+ * ```
  */
 export async function sendSlackNotification(alerts: InventoryAlert[]): Promise<void> {
   // TODO: 本番実装
@@ -252,6 +272,21 @@ export async function sendDailyReport(report: any): Promise<void> {
 
 /**
  * 利益レポート通知
+ * 
+ * 利益分析結果をSlackに送信します。
+ * 
+ * @param {ProfitReport} report - 利益レポート
+ * @returns {Promise<void>}
+ * 
+ * @example
+ * ```typescript
+ * const report = {
+ *   period: '2026-05',
+ *   summary: { totalSales: 3800000, totalProfit: 1140000, ... },
+ *   ...
+ * };
+ * await sendProfitReport(report);
+ * ```
  */
 export async function sendProfitReport(report: ProfitReport): Promise<void> {
   // TODO: 本番実装
